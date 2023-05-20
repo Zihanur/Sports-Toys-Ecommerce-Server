@@ -27,35 +27,51 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
 
-    const sportsToyoysCollection = client.db("sportsToysDB").collection("sportsToys");
+    //collections
+    const sportsToyoysCollection = client
+      .db("sportsToysDB")
+      .collection("sportsToys");
     const allToysCollection = client.db("sportsToysDB").collection("allToys");
     const myToysCollection = client.db("sportsToysDB").collection("myToys");
 
+    //home page toys category
     app.get("/toys", async (req, res) => {
       const result = await sportsToyoysCollection.find().toArray();
       res.send(result);
     });
 
     //all toys
-    app.get("/alltoys", async(req,res)=>{
+    app.get("/alltoys", async (req, res) => {
       const result = await allToysCollection.find().toArray();
       res.send(result);
-    })
+    });
 
-    app.get('/alltoys/:id', async(req,res)=>{
+    app.get("/alltoys/:id", async (req, res) => {
       const id = req.params.id;
-      const query = {_id: new ObjectId(id)}
+      const query = { _id: new ObjectId(id) };
       const result = await allToysCollection.findOne(query);
       res.send(result);
-    })
+    });
 
     //my toys
-    app.post('/mytoys', async(req,res)=>{
+    app.post("/mytoys", async (req, res) => {
       const mytoys = req.body;
-      console.log(mytoys)
+      console.log(mytoys);
       const result = await myToysCollection.insertOne(mytoys);
+      res.send(result);
+    });
+
+    app.get("/mytoys", async (req, res) => {
+      const result = await myToysCollection.find().toArray();
+      res.send(result);
+    });
+
+    app.delete("/mytoys/:id", async (req, res) => {
+      const id = req.params.id;
+      const insert = {_id: new ObjectId(id)}
+      const result = await myToysCollection.deleteOne(insert);
       res.send(result)
-    })
+    });
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });

@@ -29,6 +29,7 @@ async function run() {
 
     const sportsToyoysCollection = client.db("sportsToysDB").collection("sportsToys");
     const allToysCollection = client.db("sportsToysDB").collection("allToys");
+    const myToysCollection = client.db("sportsToysDB").collection("myToys");
 
     app.get("/toys", async (req, res) => {
       const result = await sportsToyoysCollection.find().toArray();
@@ -41,12 +42,21 @@ async function run() {
       res.send(result);
     })
 
-    app.get('/toy/:id', async(req,res)=>{
+    app.get('/alltoys/:id', async(req,res)=>{
       const id = req.params.id;
-      const filter = {_id: new ObjectId(id)}
-      const result = await allToysCollection.findOne(filter);
+      const query = {_id: new ObjectId(id)}
+      const result = await allToysCollection.findOne(query);
       res.send(result);
     })
+
+    //my toys
+    app.post('/mytoys', async(req,res)=>{
+      const mytoys = req.body;
+      console.log(mytoys)
+      const result = await myToysCollection.insertOne(mytoys);
+      res.send(result)
+    })
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(

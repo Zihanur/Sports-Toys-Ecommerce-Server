@@ -66,11 +66,45 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/mytoys/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await myToysCollection.findOne(query);
+      res.send(result);
+    });
+
+    app.put("/mytoys/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const updateToy = req.body;
+      console.log(updateToy);
+      const options = { upsert: true };
+      const updateDoc = {
+        $set: {
+          toy_name: updateToy.toy_name,
+          img: updateToy.img,
+          sub_category: updateToy.sub_category,
+          seller: updateToy.seller,
+          email: updateToy.email,
+          price: updateToy.price,
+          quantity: updateToy.quantity,
+          rating: updateToy.rating,
+          details: updateToy.details,
+        },
+      };
+      const result = await myToysCollection.updateOne(
+        filter,
+        updateDoc,
+        options
+      );
+      res.send(result);
+    });
+
     app.delete("/mytoys/:id", async (req, res) => {
       const id = req.params.id;
-      const insert = {_id: new ObjectId(id)}
+      const insert = { _id: new ObjectId(id) };
       const result = await myToysCollection.deleteOne(insert);
-      res.send(result)
+      res.send(result);
     });
 
     // Send a ping to confirm a successful connection
